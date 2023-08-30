@@ -1,0 +1,252 @@
+{% load static %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% load i18n %}
+
+{% get_current_language as language_code %}
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+
+    <title>Klona</title>
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+      rel="stylesheet"
+    />
+    {% if 'app' in request.path%}
+    <link rel="stylesheet" href="{% static 'app/dashboard.css' %}">
+    {% endif %}
+    <!-- Vendor CSS Files -->
+    <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet" />
+    <link
+      href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}"
+      rel="stylesheet"
+    />
+    <link
+      href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}"
+      rel="stylesheet"
+    />
+    <link
+      href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}"
+      rel="stylesheet"
+    />
+    <link href="{% static 'assets/vendor/remixicon/remixicon.css' %}" rel="stylesheet" />
+    <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet" />
+
+    <!-- Template Main CSS File -->
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet" />
+      <style>
+      body {
+  font-family: Arial, Sans;
+  margin: 0;
+}
+      .spanner {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  background: #2a2a2a55;
+  width: 100%;
+  display: block;
+  text-align: center;
+  height: 100%;
+  color: #000;
+  transform: translateY(-50%);
+  z-index: 1000;
+  display: grid;
+  visibility: hidden;
+}
+
+.loader,
+.loader:before,
+.loader:after {
+  border-radius: 100%;
+  width: 2.5em;
+  height: 2.5em;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation: load7 1.8s infinite ease-in-out;
+  animation: load7 1.8s infinite ease-in-out;
+}
+.loader {
+  color: #7132b1;
+  font-size: 20px;
+  font-weight: bold;
+  margin: 80px auto;
+  position: relative;
+  text-indent: -9999em;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
+}
+.loader:before,
+.loader:after {
+  content: "";
+  position: absolute;
+  top: 0;
+}
+.loader:before {
+  left: -3.5em;
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
+}
+.loader:after {
+  left: 3.5em;
+}
+@-webkit-keyframes load7 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 2.5em 0 -1.3em;
+  }
+  40% {
+    box-shadow: 0 2.5em 0 0;
+  }
+}
+@keyframes load7 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 2.5em 0 -1.3em;
+  }
+  40% {
+    box-shadow: 0 2.5em 0 0;
+  }
+}
+
+.show {
+  visibility: visible;
+}
+
+p{
+font-size:20px;
+font-weight: bold;
+}
+
+.spanner{
+  opacity: 0;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+.spanner.show{
+  opacity: 1;
+}
+</style>
+  </head>
+
+  <body>
+    <!-- ======= Header ======= -->
+
+    <header id="header" class="header fixed-top bg-dark">
+      <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+        <a href="https://klona.ai/feed" class="logo d-flex align-items-center">
+          <img src="{% static 'assets/img/logo-purple-klona.png' %}" alt="" />
+        </a>
+        <nav id="navbar" class="navbar navbar-light" style="background-color: #0000;">
+          <ul>
+          {% if request.user.is_authenticated %}              
+                <li><a class="nav-link scrollto active" href="{% url 'user_home' %}">Images</a></li>
+            {% else %}
+            <li><a class="nav-link scrollto active" href="https://klona.ai/feed">Home</a></li>
+          {% endif %}
+
+           {% if request.user.is_authenticated %}
+                {% if request.user.is_superuser %}
+                    <li><a class="nav-link scrollto" href="{% url 'admin:login' %}">{% trans 'Admin' %}</a></li>
+                {% endif %}
+                <li><a class="nav-link"  href="{% url 'edit_user_form' %}">{% trans 'Edit User' %}</a></li>
+                <li><a class="nav-link"  href="{% url 'generate_shows' %}">{% trans 'Generate Shows' %}</a></li>
+                {% else %}
+                <li><a class="nav-link scrollto active" href="{% url 'accounts:log_in' %}">{% trans 'Log in' %}</a></li>
+                <li><a class="nav-link scrollto active" href="{% url 'accounts:sign_up' %}">{% trans 'Create an account' %}</a></li>
+            {% endif %}
+          </ul>
+          <i class="bi bi-list mobile-nav-toggle"></i>
+        </nav>
+        <!-- .navbar -->
+      </div>
+    </header>
+    <!-- End Header -->
+
+    <!-- ======= Hero Section ======= -->
+    {% if request.user.is_authenticated %}
+
+    <section class="container mt-5"><br><br><br>
+    {% block startdata %}
+    {% endblock startdata %}
+
+  </section>
+        {% if 'app' in request.path %}
+        <section class="container mt-5"><br><br><br>
+<!--            <section id="values"  class="values col col-lg-12 align-items-center">-->
+<!--                <div class="container">-->
+                    {% block dashboard %}
+                    {% endblock dashboard %}
+<!--                </div>-->
+            </section>
+<!--        </section>-->
+        
+        {% elif 'accounts' in request.path%}
+        <section id="hero" class="hero d-flex col form-group row gy-4">
+            {% block accounts %}
+            {% endblock accounts %}
+        </section>
+        {% elif 'app/user_form' in request.path %}
+        <section id="hero" class="hero d-flex col form-group row gy-4">
+          {% block user_form %}
+          {% endblock user_form %}
+      </section>
+        {% else %}
+            <section id="values" class="values row col-lg-12">
+                {% block content %}
+                {% endblock content %}
+                {% block htmlz %}
+                {% endblock htmlz %}
+
+            </section>
+        <section id="hero" class="hero d-flex col form-group row gy-4">
+            {% block urlstatus %}
+            {% endblock urlstatus %}
+        </section>
+        {% endif %}
+      {% else %}
+      <!-- <br><br><br><br><br> -->
+       <div class="spanner ">
+  <div class="loader"></div>
+  <p>Processing Your Request... Please be patient.</p>
+</div>
+    {% endif %}
+
+    <!-- End Hero -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    <script src="{% static 'assets/js/main.js' %}"></script>
+    <script src="{% static 'assets/vendor/jquery/jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/popper/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/ie10-viewport-bug-workaround.js' %}"></script>
+
+    <!-- Vendor JS Files -->
+    <script src="{% static 'assets/vendor/purecounter/purecounter_vanilla.js' %}"></script>
+    <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
+    <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+    {% if 'app' in request.path %}
+    <script src = "{%static 'app/dashboard.js' %}"></script>
+    {% endif %}
+    <!-- Template Main JS File -->
+    <script src="{% static 'assets/js/main.js' %}"></script>
+  </body>
+</html>
+

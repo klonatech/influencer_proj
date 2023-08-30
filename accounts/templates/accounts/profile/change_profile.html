@@ -1,0 +1,28 @@
+{% extends 'layouts/default/base.html' %}
+
+{% load bootstrap5 %}
+{% load i18n %}
+
+{% block accounts %}
+<section id="hero" class="hero d-flex col form-group row gy-4">
+
+<section class="contact">
+        <div class="container" data-aos="fade-up">
+        </div>
+  <div class="container-fluid mt-3 half">
+      <div class="container php-email-form">
+        <form class=".col-md-*"  method="post">
+<div class="form-group row gy-4">
+            <h2>Change Profile</h2>
+
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <div>
+        <button type="submit" class="btn btn-success">{% trans 'Change' %}</button>
+</div></div>
+    </form>
+</div>
+  </div>
+</section>
+</section>
+{% endblock %}

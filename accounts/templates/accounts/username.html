@@ -1,0 +1,131 @@
+{% load static %}
+{% load bootstrap5 %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+
+    <title>Log In</title>
+    <meta content=""
+        name="Empowers DevOps teams to test their websites, web-apps, and APIs with thousands of concurrent connections in real browsers" />
+
+    <meta content="" name="Load Testing, Spike Testing, Stress Testing" />
+
+    <!-- Favicons -->
+    <link href="{% static 'assets/img/favicon.png' %}" rel="icon" />
+    <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon" />
+
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        rel="stylesheet" />
+
+    <!-- Vendor CSS Files -->
+   <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+      rel="stylesheet"
+    />
+
+    <!-- Vendor CSS Files -->
+   <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet" />
+    <link
+      href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}"
+      rel="stylesheet"
+    />
+    <link
+      href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}"
+      rel="stylesheet"
+    />
+    <link
+      href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}"
+      rel="stylesheet"
+    />
+    <link href="{% static 'assets/vendor/remixicon/remixicon.css' %}" rel="stylesheet" />
+    <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet" />
+
+    <!-- Template Main CSS File -->
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet" />
+</head>
+
+<body>
+    <!-- ======= Header ======= -->
+
+    <header id="header" class="header fixed-top">
+        <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+        <a href="https://klona.ai/feed" class="logo d-flex align-items-center">
+          <img src="{% static 'assets/img/logo.png' %}" alt="" />
+        </a>
+
+        <nav id="navbar" class="navbar">
+          <ul>
+            <li>
+              <a class="nav-link scrollto" href="https://klona.ai/feed">Home</a>
+            </li>
+            <li><a class="getstarted scrollto" href="{% url 'accounts:sign_up' %}">Create Account</a></li>
+                </ul>
+                <i class="bi bi-list mobile-nav-toggle"></i>
+            </nav>
+            <!-- .navbar -->
+        </div>
+    </header>
+    <!-- End Header -->
+<section id="hero2" class="hero2 d-flex col form-group row gy-4">
+    <section class="contact">
+        div class="alert alert-danger">
+        <a class="close" href="#" data-dismiss="alert">×</a>
+        {{ form.errors }}
+        <div class="container" data-aos="fade-up">
+        </div>
+
+        <div class="container-fluid mt-3 half">
+            <div class="container php-email-form">
+                <div class="form-group row gy-4">
+              <img src="{% static 'assets/img/logo.png' %}">
+
+            <h2>Remind a username</h2>
+
+            <form method="post">
+                                  {% csrf_token %}
+
+                <div class="form-group row gy-4">
+                <div class="form-group"><label for="id_email">Email</label><input type="email" name="email"
+                        class="form-control" placeholder="Email" title="" required id="id_email"></div>
+                <div>
+                    <button type="submit">Next</button>
+                </div>
+
+            </div></form>
+
+            <hr>
+            <div>
+                <ul>
+                    <li>
+                        <a href="{% url 'accounts:log_in' %}">Log in</a>
+                    </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        </div>
+    </section></section>
+
+
+       <script src="{% static 'assets/vendor/jquery/jquery-3.4.1.min.js' %}"></script>
+
+     <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+     <script src="/static/general/js/ie10-viewport-bug-workaround.js"></script>
+
+        <!-- Vendor JS Files -->
+        <script src="{% static 'assets/vendor/purecounter/purecounter_vanilla.js' %}"></script>
+        <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
+        <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+        <script src="{% static 'assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+        <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+
+</body>
+
+</html>

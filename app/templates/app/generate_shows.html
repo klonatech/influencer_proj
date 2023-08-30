@@ -1,0 +1,35 @@
+{% extends 'layouts/default/base.html' %}
+
+{% block startdata %}
+<style>
+    .centered-options {
+        text-align: center;
+    }
+</style>
+
+<form method="post" class="container d-flex flex-column align-items-center justify-content-center">
+    {% csrf_token %}
+    <select class="form-select mb-3"  name="enviroment_selectbox" style="width: 50%;" requi>
+        <option selected>Select Environment</option>
+        {% for item in enviroment %}
+        <option value="{{item}}">{{item}}</option>
+        {% endfor %}
+    </select>
+
+    <select class="form-select mb-3"  name='hairstyle_selectbox' style="width: 50%;" required>
+        <option selected>Select Hair Style</option>
+        {% for style in hair_style %}
+        <option value="{{style}}">{{style}}</option>
+        {% endfor %}
+    </select>
+
+    <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="nsfw_checkbox" name="nsfw_checkbox">
+        <label class="form-check-label" for="nsfw_checkbox">NSFW</label>
+    </div>
+
+    <button type="submit" class="btn btn-success">GENERATE</button>
+</form>
+
+
+{% endblock startdata %}

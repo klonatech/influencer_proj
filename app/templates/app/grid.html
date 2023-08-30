@@ -1,0 +1,73 @@
+{% extends 'layouts/default/base.html' %}
+{% load static %}
+{% load bootstrap5 %}
+
+{% block dashboard %}
+    
+    <div class="next-button">
+        {% if next_page %}
+        <a id="next_page_btn" class="btn btn-success" href="?page={{ next_page }}">Next Page</a>
+        {% endif %}
+    </div>
+    <br>
+    <form id="postForm"  method="get" style="display: inline;">
+        <select name="post_option" class="form-select" onchange="submitForm()">
+            <option selected>Select Post Type</option>
+            <option value="not_approved" {% if post_option == 'not_approved' %}selected{% endif %}>Not Checked</option>
+            <option value="approved" {% if post_option == 'approved' %}selected{% endif %}>Approved</option>
+            <option value="disapproved" {% if post_option == 'disapproved' %}selected{% endif %}>Dispproved</option>
+            <!-- <option value="not_approved">Not Approved</option>
+            <option value="approved">Approved</option> -->
+        </select>
+    </form>
+        
+        
+<div class="table-responsive mt-2">
+
+<table class="table table-bordered">
+    <thead>
+         <tr>
+             <!-- <th>Username</th> -->
+             <!-- <th>Approve Post</th> -->
+            <th>Attachments</th>
+            <!-- <th>NSFW</th>
+            <th>Approved</th>
+            <th>Delete Action</th> -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for post_data in results %}
+            <tr>
+                <!-- <td> -->
+                    <!-- <input type="checkbox" id="{{ post_data.0.id }}" value="{{ post.0.id }} "  onchange="ApproveEntirePost(this.id)"> -->
+                    <!-- <label>Approve Post</label> -->
+                <!-- </td> -->
+                <td>
+                    {% for result in post_data %}
+                        <div style='display:inline-block; margin-bottom: 10px;'>
+                            <img class="img-thumbnail" src="https://img.klona.ai/{{ result.filename }}" alt="Image">
+                            <div>
+                                <input type="checkbox" id="{{ result.filename }}" {% if result.nsfw == 1 %}checked{% endif %} onchange="handleNsfw(this.id)">
+                                <label for="{{ result.filename }}" {% if result.nsfw == 1 %}style="color:green"{% endif %}>NSFW</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" value = "{{ result.filename }}" name="{{ result.filename }}" {% if result.approved == 1 %}checked{% endif %} onchange="handleApprove(this.value)">
+                                <label for="approve_{{ result.filename }}">Approved</label>
+                            </div>
+                            <button class="btn btn-danger btn-sm" onclick="deleteImage('{{ result.filename }}')">Disapprove</button>
+                        </div>
+                    {% endfor %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+<div class="next-button">
+    {% if next_page %}
+    <a id="next_page_btn" class="btn btn-success" href="?page={{ next_page }}">Next Page</a>
+    {% endif %}
+</div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+{% endblock dashboard %}

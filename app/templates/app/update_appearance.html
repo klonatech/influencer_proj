@@ -1,0 +1,135 @@
+{% extends 'layouts/default/base.html' %}
+
+{% block startdata %}
+
+<form action="" method="post">
+  {% csrf_token %}
+<div class="row">
+    <div class="col-lg-2 card">
+        <img src="{{avator}}" class="card-img-top" alt="avator">
+        <div class="card-body">
+          <h5 class="card-title">{{username}}</h5>
+          <!-- <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
+          <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+          <button class="btn btn-success" type="submit">Generate</button>
+        </div>
+    </div>
+
+      <div class="col-lg-2">
+        <select class="form-select mt-3" aria-label="Default select example">
+            <option selected>Select Trait</option>
+            {% for trait in traits %}
+                <option value="{{ trait.value }}">{{ trait.name }}</option>
+            {% endfor %}
+          </select>
+      </div>
+
+      <div class="col-lg-8">
+          <div class="progress-stacked mt-4">
+            <div class="progress" role="progressbar" id="progress_bar_mytraits" aria-label="Segment one" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
+              <div class="progress-bar" id="my_traits_percentage">My Traits 20%</div>
+            </div>
+            <div class="progress" id="progress_bar_newtraits" role="progressbar" aria-label="Segment two" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
+              <div class="progress-bar bg-success" id="new_traits_percentage">New Traits 80%</div>
+            </div>
+          </div>
+  
+          <input name="new_traits_input" type="range" class="custom-range mt-3" style="width: 100%; display: none;" id="new_traits" min="0" max="80" value="80">
+          <!-- <div class="percentage-value">My Traits: <span id="my_traits_percentage">20%</span></div> -->
+          <input name="my_traits_input" type="range" class="custom-range mt-3" style="width: 100%;" id="my_traits" min="20" max="100" value="20">
+      </div>
+        
+
+</div>
+</form>
+<style>
+   
+  .progress-bar-new {
+          background-color: green; /* Change this to your desired color */
+  }
+
+  .row{
+      background-color: rgb(249, 237, 255);
+  }
+  .custom-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 20px;
+    background-color: #007bff;
+    cursor: pointer;
+    border-radius: 50%;
+  }
+
+  .custom-range::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background-color: #007bff;
+    cursor: pointer;
+    border-radius: 50%;
+  }
+</style>
+
+<script>
+
+    // Function to update values
+  function updateValues(inputId, percentageId, progressBarId, otherInputId, other_progresbar_id, other_percent_id) {
+    // Get the input elements
+    let rangeInput = document.getElementById(inputId);
+    // console.log(rangeInput.value);
+    let otherRangeInput = document.getElementById(otherInputId);
+
+    // Get the percentage elements
+    let percentageElement = document.getElementById(percentageId);
+
+    // Get the current values of the inputs
+    let value = parseInt(rangeInput.value);
+    let otherValue = parseInt(otherRangeInput.value);
+
+    // Calculate the remaining value to ensure the sum is not greater than 100
+    let remainingValue = 100 - otherValue;
+
+    // Enforce the restriction
+    if (value > remainingValue || remainingValue == 0) {
+      console.log('excedding value');
+        // value = remainingValue;
+        rangeInput.value = value;
+        // otherInputId.value = 100-value;
+      
+    }
+    if((value+otherValue)<100 || (value+otherValue) > 100){
+      otherValue = 100 - value;
+      otherpercentelement = document.getElementById(other_percent_id)
+      otherpercentelement.textContent =  "New Traits "+otherValue + "%";
+    // Update the progress bar width
+      let progressBar = document.getElementById(other_progresbar_id);
+      progressBar.style.width = otherValue + "%";
+      progressBar.setAttribute("aria-valuenow", otherValue.value);
+      // rangeInput.value = value;
+      document.getElementById(otherInputId).value = otherValue;
+      // document.getElementById(inputId).value = value;
+    }
+    
+    // Update the percentage element text
+    percentageElement.textContent = "My Traits " + value + "%";
+
+    // Update the progress bar width
+    let progressBar = document.getElementById(progressBarId);
+    progressBar.style.width = value + "%";
+    progressBar.setAttribute("aria-valuenow", value);
+    // rangeInput.value = value;
+    document.getElementById(inputId).value = value;
+  }
+
+  // Add event listeners to both input elements
+  let myTraitsInput = document.getElementById("my_traits");
+  let newTraitsInput = document.getElementById("new_traits");
+
+  myTraitsInput.addEventListener("input", function () {
+    updateValues("my_traits", "my_traits_percentage", "progress_bar_mytraits", "new_traits", "progress_bar_newtraits", "new_traits_percentage");
+  });
+
+  newTraitsInput.addEventListener("input", function () {
+    updateValues("new_traits", "new_traits_percentage", "progress_bar_newtraits", "my_traits", "progress_bar_mytraits", "my_traits_percentage");
+  });
+</script>
+{% endblock startdata%}

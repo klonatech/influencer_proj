@@ -86,15 +86,15 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'influencer_proj.wsgi.application'
-
+import mysql.connector.django
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.mysql',
-        'ENGINE': 'mysql.connector.django',
+        'ENGINE': 'django.db.backends.mysql',
+        # 'ENGINE': 'mysql.connector.django',
         'NAME': 'klona',
         'USER': 'backend-user',
         'PASSWORD': 'N2rR<=:dhVx9d3?>!@.?',
@@ -103,7 +103,7 @@ DATABASES = {
     }
 }
 
-ALLOWED_HOSTS = ['creator.klona.ai']
+ALLOWED_HOSTS = ['creator.klona.ai', '127.0.0.1', '0.0.0.0']
 CORS_ALLOW_ALL_ORIGINS = True
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

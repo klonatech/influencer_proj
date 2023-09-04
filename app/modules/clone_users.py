@@ -29,6 +29,7 @@ class CloneUserAccounts:
         # print(user_list)
 
     def klone_users(self):
+        print('klonning users')
         data = self.get_users_list()
         for record in data:
             # username = username_obj.username
@@ -39,6 +40,7 @@ class CloneUserAccounts:
                 user = User.objects.create_user(username=record[1], password=password, is_staff=False)
                 user.first_name = record[0]
                 user.save()
+
 if __name__=='__main__':
     clone_users = CloneUserAccounts()
-    clone_users.get_users_list()
+    clone_users.klone_users()

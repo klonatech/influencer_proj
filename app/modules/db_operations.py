@@ -67,7 +67,7 @@ def update_checkbox_value(file_name, value, column):
         WHERE filename=%s
         """
         cursor = connection.cursor()
-        print('query ', query)
+        print('query ', file_name, value, column)
         cursor.execute(query, (value, file_name))
         connection.commit()
         # print('updated nsfw')

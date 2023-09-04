@@ -3,18 +3,28 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 from . modules.clone_users import CloneUserAccounts #import CloneUserAccounts
 from . modules import db_operations
-from .modules import database
+from .modules import database, traits_female
 from .models import Users
 from .forms import UserForm
+
 # @login_required
 # def user_home(request):
 #     # CloneUserAccounts().klone_users()
 #     return render(request, 'app/home.html')
+import datetime
 
 @login_required
 def generate_shows(request):
+    from django.contrib import messages
     if request.method == "GET":
         from .modules import enviroments
+        last_post_time_str = request.session.get('last_post_time')
+        if last_post_time_str:
+            last_post_time = datetime.datetime.strptime(last_post_time_str, "%Y-%m-%d %H:%M:%S.%f")
+            if (datetime.datetime.now() - last_post_time).total_seconds() < 600:
+                wait_time = int(600 - (datetime.datetime.now() - last_post_time).total_seconds())
+                messages.warning(request, f'Please wait for {wait_time} seconds before generating another show.')
+                return render(request, 'app/generate_shows.html')
         gender_id = Users.objects.get(username=request.user).gender_id
         if gender_id == 2:
             hair_style =  ['Default','hair bun','curly hair','egyptian bob hair','long_braid hair','buzzcut','dreads','side buns hair','pigtail','emo hair','knotless braid hair','updo','ponytail']
@@ -24,7 +34,22 @@ def generate_shows(request):
         return render(request, 'app/generate_shows.html', context)
     else:
         import subprocess
-        # agent_handle = Users.objects.get(username = request.user).agent_handle
+        import threading
+        
+        from django.http import JsonResponse
+        last_post_time_str = request.session.get('last_post_time')
+        print(f'lasatposttime {last_post_time_str}')
+        if last_post_time_str:
+            
+            last_post_time = datetime.datetime.strptime(last_post_time_str, "%Y-%m-%d %H:%M:%S.%f")
+            if (datetime.datetime.now() - last_post_time).total_seconds() < 600:
+                wait_time = int(600 - (datetime.datetime.now() - last_post_time).total_seconds())
+                messages.warning(request, f'Please wait for {wait_time} seconds before generating another show.')
+                return render(request, 'app/generate_shows.html')
+                # return JsonResponse({'message': f'Please wait for {wait_time} seconds before generating another show.'})
+        print('out of if ')
+        # If enough time has passed or it's the first POST request, update the last_post_time in the session
+        request.session['last_post_time'] = str(datetime.datetime.now())    
         environment = request.POST.get('enviroment_selectbox')
         hairstyle = request.POST.get('hairstyle_selectbox')
         if hairstyle == 'Default':
@@ -32,21 +57,61 @@ def generate_shows(request):
         nsfw_checkbox = request.POST.get('nsfw_checkbox')
         # Define the command as a list of strings
         if nsfw_checkbox == 'on':
-            command = ["python3", "/workspace/klona/agent_generator_fashion_show.py", "--agent-handle", f"'{str(request.user)}'", "--hairstyle", f"'{hairstyle}'", "--environment", f"'{environment}'", "\'--nsfw\'"]
+            command = ["python3", "/workspace/klona/agent_generator_fashion_show.py", "--agent-handle", f"'{str(request.user)}'", "--hairstyle", f"'{hairstyle}'", "--environment", f"'{environment}'", "--nsfw"]
         else:
-            command = ["python3", "/workspace/klona/agent_generator_fashion_show.py", "--agent-handle", f"'{str(request.user)}'", "--hairstyle", f"'{hairstyle}'", "--environment", f"'{environment}'"]
+            command = ["python3", "/workspace/klona/agent_generator_fashion_show.py", "--agent-handle", f"'{str(request.user)}'", "--hairstyle", f"{hairstyle}", "--environment", f"{environment}"]
         # Run the command
         print(f'command {command}')
-        try:
+        # try:
+        def run_subprocess():
             p = subprocess.Popen(
                 command,
                 stdout=subprocess.PIPE,
             )
             output, err = p.communicate()
-            print(output, err)
-        except subprocess.CalledProcessError as e:
-            print("An error occurred:", e)
-            return redirect('generate_shows')
+        
+        thread = threading.Thread(target=run_subprocess)
+        thread.start()
+            # print(output, err)
+        # except subprocess.CalledProcessError as e:
+        #     print("An error occurred:", e)
+        context = {'message':f'Generating shows of {environment} with {hairstyle} hairstyle'}
+        return redirect('generate_shows')
+
+@login_required
+def update_appearance(request):
+    import subprocess
+    import threading
+    
+    if request.method == 'POST':
+        print(f'post request {request.POST}')
+        my_traits = request.POST.get('my_traits_input')
+        new_traits = request.POST.get('new_traits_input')
+        user_name = str(request.user)
+        command = ["python3", "/workspace/klona/agent_all_avatars.py", "--agent-handle", f"'{str(request.user)}'", " --fusion-style", f"{hairstyle}", "--environment", f"{environment}"]
+        # Run the command
+        print(f'command {command}')
+        # try:
+        def run_subprocess():
+            p = subprocess.Popen(
+                command,
+                stdout=subprocess.PIPE,
+            )
+            output, err = p.communicate()
+        
+        thread = threading.Thread(target=run_subprocess)
+        thread.start()
+        return render(request, 'app/update_avator.html')
+    print('get request ', request)
+    avator = Users.objects.get(username = request.user).avatar or 'None'
+    avator_path = 'https://img.klona.ai/' + avator
+    
+    context = {
+        'avator': avator_path,
+        'username': request.user,
+        'traits': traits_female.facial_traits
+    }
+    return render(request, 'app/update_appearance.html', context)
 
 @login_required
 def edit_user_form(request):
@@ -94,6 +159,7 @@ def update_approve(request):
 @login_required
 def user_home(request):
     user = str(request.user)
+    # CloneUserAccounts().klone_users()
     # post_id = request.GET.get('post_id')
     post_option = request.GET.get('post_option')
     page = int(request.GET.get('page', 1))
@@ -109,7 +175,7 @@ def user_home(request):
                 attachments a ON p.id = a.post_id
             LEFT JOIN 
                 users u ON p.user_id = u.id
-            WHERE (a.filename IS NOT NULL) AND a.approved=1 AND (a.type='png' OR a.type='jpg') AND (u.username=%s)
+            WHERE (a.filename IS NOT NULL) AND a.approved=1 AND (a.type='png' OR a.type='jpg') AND (u.username=%s) AND (a.nsfw != 1)
             ORDER BY p.created_at DESC, p.id DESC
             LIMIT %s OFFSET %s
             """
@@ -123,7 +189,7 @@ def user_home(request):
                 attachments a ON p.id = a.post_id
             LEFT JOIN 
                 users u ON p.user_id = u.id
-            WHERE (a.filename IS NOT NULL) AND a.approved=-1 AND (a.type='png' OR a.type='jpg') AND (u.username=%s)
+            WHERE (a.filename IS NOT NULL) AND a.approved=-1 AND (a.type='png' OR a.type='jpg') AND (u.username=%s) AND (a.nsfw != 1)
             ORDER BY p.created_at DESC, p.id DESC
             LIMIT %s OFFSET %s
         """
@@ -137,15 +203,16 @@ def user_home(request):
                 attachments a ON p.id = a.post_id
             LEFT JOIN 
                 users u ON p.user_id = u.id
-            WHERE (a.filename IS NOT NULL) AND (a.approved IS NULL OR a.approved=0) AND (a.type='png' OR a.type='jpg') AND (u.username=%s)
+            WHERE (a.filename IS NOT NULL) AND (a.approved IS NULL OR a.approved=0) AND (a.type='png' OR a.type='jpg') AND (u.username=%s) AND (a.nsfw != 1)
             ORDER BY p.created_at DESC, p.id DESC
             LIMIT %s OFFSET %s
         """
-        
+    # print(f'query \n', query)
     connection = database.get_mysql_connection()
-    with connection.cursor() as cursor:
-        cursor.execute(query, (user, items_per_page, offset))
-        results = cursor.fetchall()
+    cursor = connection.cursor()
+    # with connection.cursor() as cursor:
+    cursor.execute(query, (user, items_per_page, offset))
+    results = cursor.fetchall()
 
     keys = [
         'user_name','user_id','id', 'approved', 'nsfw', 'filename'

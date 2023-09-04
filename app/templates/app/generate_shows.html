@@ -6,7 +6,17 @@
         text-align: center;
     }
 </style>
+<!-- {{messages}} -->
+{% if messages %}
+    <div class="container">
+        {% for message in messages %}
+            <div class="alert {% if message.tags %} alert-{{ message.tags }}{% endif %}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
 
+{% else %}
 <form method="post" class="container d-flex flex-column align-items-center justify-content-center">
     {% csrf_token %}
     <select class="form-select mb-3"  name="enviroment_selectbox" style="width: 50%;" requi>
@@ -23,13 +33,13 @@
         {% endfor %}
     </select>
 
-    <div class="mb-3 form-check">
+    <!-- <div class="mb-3 form-check">
         <input type="checkbox" class="form-check-input" id="nsfw_checkbox" name="nsfw_checkbox">
         <label class="form-check-label" for="nsfw_checkbox">NSFW</label>
-    </div>
+    </div> -->
 
     <button type="submit" class="btn btn-success">GENERATE</button>
 </form>
-
+{% endif %}
 
 {% endblock startdata %}

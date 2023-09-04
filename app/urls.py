@@ -10,5 +10,6 @@ urlpatterns = [
     path('update_approve/', views.update_approve, name = 'update_approve'),
     path('approve_entire_post/', views.approve_entire_post, name='approve_entire_post'),
     path('user_form', views.edit_user_form, name = 'edit_user_form'),
-    path('generate_shows/', views.generate_shows, name = 'generate_shows')
+    path('generate_shows/', views.generate_shows, name = 'generate_shows'),
+    path('update_appearance', views.update_appearance, name = 'update_appearance')
 ]

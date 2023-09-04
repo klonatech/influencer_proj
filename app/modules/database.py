@@ -3,14 +3,14 @@ import mysql.connector
 def get_mysql_connection():
     print("Connecting to mysqll..")
     try:
-        return mysql.connector.connect  (
+        return mysql.connector.connect(
             host        = '195.154.69.121',
             user        = 'backend-user',
             password    = 'N2rR<=:dhVx9d3?>!@.?',
             database    = 'klona',
             port = 29877,
         )
-
+    #mysql.connector.connect
     except Exception as e:
         print('can not connect with database following error occured ', e)
 
